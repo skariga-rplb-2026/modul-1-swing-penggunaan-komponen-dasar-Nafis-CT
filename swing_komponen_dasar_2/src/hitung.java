@@ -40,6 +40,9 @@ public class hitung extends javax.swing.JFrame {
         btnKeluar = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         txtTotal = new javax.swing.JTextField();
+        txtDiskon = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -84,6 +87,17 @@ public class hitung extends javax.swing.JFrame {
         txtTotal.setEnabled(false);
         txtTotal.setOpaque(true);
 
+        txtDiskon.setText(" ");
+        txtDiskon.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtDiskonActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setText("DISKON");
+
+        jLabel6.setText("%");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -101,17 +115,22 @@ public class hitung extends javax.swing.JFrame {
                                     .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(btnHitung)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(txtNamaBarang)
-                                        .addComponent(txtHarga)
-                                        .addComponent(txtQty)
-                                        .addComponent(txtTotal, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE))))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(txtNamaBarang)
+                                            .addComponent(txtHarga)
+                                            .addComponent(txtQty)
+                                            .addComponent(txtTotal, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
+                                            .addComponent(txtDiskon))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))))
                             .addComponent(lblTotal))
-                        .addGap(0, 83, Short.MAX_VALUE)))
+                        .addGap(0, 40, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -130,14 +149,20 @@ public class hitung extends javax.swing.JFrame {
                     .addComponent(txtQty, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txtDiskon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel6))
+                    .addComponent(jLabel5))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(19, 19, 19)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnHitung)
-                .addGap(18, 18, 18)
+                .addGap(35, 35, 35)
                 .addComponent(lblTotal)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 63, Short.MAX_VALUE)
+                .addGap(25, 25, 25)
                 .addComponent(btnKeluar)
                 .addContainerGap())
         );
@@ -154,16 +179,41 @@ public class hitung extends javax.swing.JFrame {
     }//GEN-LAST:event_txtQtyActionPerformed
 
     private void btnHitungActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHitungActionPerformed
-        // TODO add your handling code here:
-        String nama_Barang = txtNamaBarang.getText();
-        double harga = Double.parseDouble(txtHarga.getText());
-        double qty = Double.parseDouble(txtQty.getText());
-        double total = harga * qty;
-        txtTotal.setText(Double.toString(total));
-        DecimalFormat angka = new DecimalFormat("###,###");
-        lblTotal.setText("Total : Rp. " + angka.format(total));
-        
-        
+       try {
+    // Ambil data Wajib 
+    // Jika ini kosong, biarkan lari ke catch (error) atau validasi manual
+    double harga = Double.parseDouble(txtHarga.getText());
+    double qty = Double.parseDouble(txtQty.getText());
+
+    // Logika Diskon Optional
+    double diskon = 0; // Set default diskon 0%
+    String inputDiskon = txtDiskon.getText(); // Ambil teksnya dulu
+    
+    // Cek jika tidak kosong DAN panjangnya lebih dari 0
+    if (inputDiskon != null && !inputDiskon.trim().isEmpty()) {
+        diskon = Double.parseDouble(inputDiskon);
+    }
+
+    // erhitungan
+    double total = harga * qty;
+    
+    // Hitung nominal diskon 
+    double nominalDiskon = total * (diskon / 100.0); 
+    
+    double totalBayar = total - nominalDiskon;
+
+    
+    // Format angka 
+    DecimalFormat df = new DecimalFormat("###,###");
+    
+    txtTotal.setText(df.format(totalBayar)); // Menampilkan angka saja
+    lblTotal.setText("Total : Rp. " + df.format(totalBayar));
+
+} catch (NumberFormatException e) {
+    // Error jika Harga/Qty kosong atau user input huruf
+    javax.swing.JOptionPane.showMessageDialog(null, 
+        "Mohon isi Harga dan Qty dengan angka yang benar!");
+}
         
         
 //        float jumlah = Float.parseFloat(txtHarga.getText()) * Float.parseFloat(txtQty.getText());
@@ -177,6 +227,10 @@ public class hitung extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, "terima kasih sudah membeli " + txtNamaBarang.getText());
         System.exit(0);
     }//GEN-LAST:event_btnKeluarActionPerformed
+
+    private void txtDiskonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDiskonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtDiskonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -210,7 +264,10 @@ public class hitung extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel lblTotal;
+    private javax.swing.JTextField txtDiskon;
     private javax.swing.JTextField txtHarga;
     private javax.swing.JTextField txtNamaBarang;
     private javax.swing.JTextField txtQty;
